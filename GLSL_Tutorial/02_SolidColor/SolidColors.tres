@@ -1,0 +1,11 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+
+uniform vec2 iResolution = vec2(200.0, 113.0);
+
+void fragment(){
+	//vec2 r = (UV * iResolution - 0.5 * iResolution.xy) / iResolution.y;
+	COLOR = vec4(0.0, 1.0, 1.0, 1.0);
+}"

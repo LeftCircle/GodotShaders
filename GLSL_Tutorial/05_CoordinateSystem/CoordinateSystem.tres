@@ -1,0 +1,24 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+
+uniform vec2 iResolution = vec2(80.0, 113.0);
+
+void fragment(){
+	
+	vec3 color1 = vec3(0.886, 0.576, 0.898);
+	vec3 color2 = vec3(0.537, 0.741, 0.408);
+	
+	vec3 pixel;
+	
+	float widthOfStrip = 40.0;
+	float widthOfStripNormalized = 0.5;
+	if (UV.x > widthOfStripNormalized){
+	//if (UV.x * iResolution.x > widthOfStrip){
+		pixel = color2;
+	} else {
+		pixel = color1;
+	}
+	COLOR = vec4(pixel, 1.0);
+}"
