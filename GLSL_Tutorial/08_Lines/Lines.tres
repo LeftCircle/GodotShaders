@@ -1,0 +1,31 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+
+void fragment(){
+	vec3 backgroundColor = vec3(1.0);
+	vec3 color1 = vec3(0.216, 0.471, 0.698);
+	vec3 color2 = vec3(1.00, 0.329, 0.298);
+	vec3 color3 = vec3(0.867, 0.910, 0.247);
+	
+	vec3 pixel = backgroundColor;
+	
+	float leftCoord = 0.54;
+	float rightCoord = 0.55;
+	if (leftCoord < UV.x && UV.x < rightCoord){
+		pixel = color1;
+	}
+	// in terms of line coordinate and thickness
+	float lineCoord = 0.25;
+	float lineThickness = 0.003;
+	if (abs(UV.x - lineCoord) < lineThickness){
+		pixel = color2;
+	}
+	// horizontal sets the final value since it is last
+	if (abs(UV.y - 0.6) < 0.05){
+		pixel = color3;
+	}
+	COLOR = vec4(pixel, 1.0);
+}
+"

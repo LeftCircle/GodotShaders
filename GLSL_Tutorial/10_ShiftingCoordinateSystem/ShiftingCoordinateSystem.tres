@@ -1,0 +1,39 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "// MOVING THE COORDINATE CENTER TO THE CENTER OF THE FRAME
+// Instead of mapping [0, iResolution.x]x[0, iResolution.y] region to
+// [0,1]x[0,1], lets map it to [-1,1]x[-1,1]. This way the coordinate
+// (0,0) will not be at the top left corner of the screen, but in the
+// middle of the screen.
+shader_type canvas_item;
+
+// the size of the Color Rect
+uniform vec2 iResolution = vec2(120, 80);
+
+void fragment(){
+	//vec2 r = UV - vec2(0.5, 0.5);
+	
+	vec2 r = UV * iResolution - 0.5 * iResolution.xy;
+	//r = 2.0 * r.xy / iResolution.xy;
+	
+	// Can create squares by dividing both by y
+	r = 2.0 * r.xy / iResolution.y;
+	
+	vec3 backgroundColor = vec3(1.0);
+	vec3 axisColor = vec3(0.0, 0.0, 1.0);
+	vec3 gridColor = vec3(0.5);
+	
+	vec3 pixel = backgroundColor;
+	// Draw the grid lines
+	// This time instead of going over a loop for every pixel
+    // we'll use mod operation to achieve the same result
+    // with a single calculation (thanks to mikatalk)
+	const float tickWidth = 0.1;
+	if (mod(r.x, tickWidth) < 0.008 || mod(r.y, tickWidth) < 0.008) pixel = gridColor;
+	
+	// Draw the axis.
+	if ((abs(r.x) < 0.005) || abs(r.y) < 0.006) pixel = axisColor;
+	COLOR = vec4(pixel, 1.0);
+}
+"

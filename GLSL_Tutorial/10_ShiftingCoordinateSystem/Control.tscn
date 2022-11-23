@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://GLSL_Tutorial/12_disks/Disks.tres" type="Shader" id=1]
+[ext_resource path="res://GLSL_Tutorial/BaseControl.tscn" type="PackedScene" id=2]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 1 )
+shader_param/iResolution = Vector2( 120, 80 )
+
+[node name="Control" instance=ExtResource( 2 )]
+
+[node name="ColorRect" parent="." index="0"]
+material = SubResource( 1 )
+margin_right = 120.0
+margin_bottom = 80.0

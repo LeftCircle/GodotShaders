@@ -1,0 +1,78 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "// ANTI-ALIASING WITH SMOOTHSTEP
+//
+shader_type canvas_item;
+uniform vec2 iResolution = vec2(120.0, 80.0);
+uniform float line_width = 0.1;
+uniform float bell_height = 2.0;
+uniform float bell_width = 10.0;
+uniform float x_shift = -0.5;
+uniform float y_shift = -0.5;
+
+float linearstep(float edge0, float edge1, float x) {
+	float t = (x - edge0)/(edge1 - edge0);
+	return clamp(t, 0.0, 1.0);
+}
+float smootherstep(float edge0, float edge1, float x) {
+	float t = (x - edge0)/(edge1 - edge0);
+	float t1 = t*t*t*(t*(t*6. - 15.) + 10.);
+	return clamp(t1, 0.0, 1.0);
+}
+
+void fragment() {
+	vec2 r =  2.0*vec2(UV * iResolution - 0.5*iResolution.xy)/iResolution.y;
+//	vec2 r =  2.0*vec2(fragCoord.xy - 0.5*iResolution.xy)/iResolution.y;
+	
+	float xMax = iResolution.x/iResolution.y;
+	
+	vec3 bgCol = vec3(0.3);
+	vec3 col1 = vec3(0.216, 0.471, 0.698); // blue
+	vec3 col2 = vec3(1.00, 0.329, 0.298); // yellow
+	vec3 col3 = vec3(0.867, 0.910, 0.247); // red
+
+	vec3 pixel = bgCol;
+	float m;
+	
+	float radius = 1.0; // increase this to see the effect better
+	float inner_radius = radius - line_width;
+	
+	
+	float dist_from_c = length(r);
+	
+	float thing_to_square = dist_from_c + x_shift;
+	float e_to_the = exp(-bell_width * thing_to_square * thing_to_square);
+	m = 1.0 - clamp(bell_height * e_to_the + y_shift, 0.0, 1.0);
+	
+	// bell curve around -0.5
+	//plot(r, 0.6*exp(-10.0*(x+0.8)*(x+0.8)) - 0.1, 0.015, col2, pixel);
+	//float bell_width_mod = 1000.0;
+	//float thing_to_square = length(r) - (1.0 - line_width);
+	//m = 1.0 - exp(-bell_width_mod* thing_to_square * thing_to_square);
+//	if (dist_from_c > ((1.0 - 2.0 * line_width / 2.0)) + 0.005){
+//		m = smoothstep(1.0 - line_width, 1.0, dist_from_c);
+//		pixel = mix(col1, bgCol, m);
+//	} else if (dist_from_c < ((1.0 - 2.0 * line_width / 2.0)) - 0.005){
+//		m = smootherstep(1.0 - (2.0 * line_width), 1.0 - line_width, dist_from_c);
+//		pixel = mix(col1, bgCol, m);
+//		pixel = mix(bgCol, col1, m);
+//	}
+
+//	if (dist_from_c > ((1.0 - 2.0 * line_width / 2.0))){
+//		m = smoothstep(1.0 - 0.01, 1.0, dist_from_c);
+//		pixel = mix(col1, bgCol, m);
+//	} else if (dist_from_c < ((1.0 - 2.0 * line_width / 2.0))){
+//		m = smootherstep(1.0 - (2.0 * 0.01), 1.0 - 0.01, dist_from_c);
+//		pixel = mix(col1, bgCol, m);
+//		pixel = mix(bgCol, col1, m);
+//	}
+
+	//m = smootherstep(inner_radius - 0.005, inner_radius + 0.005, length(r));
+	pixel = mix(col1, bgCol, m);
+	
+	float alpha = 1.0 * float((dist_from_c < (radius + line_width)) && (dist_from_c > radius - line_width));
+	//COLOR = vec4(pixel, alpha);
+	COLOR = vec4(pixel, 1.0);
+}
+"

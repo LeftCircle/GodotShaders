@@ -1,0 +1,92 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "// FUNCTION PLOTTING
+//
+// It is always useful to see the plots of functions on cartesian
+// coordinate system, to understand what they are doing precisely
+//
+// Let's plot some 1D functions!
+// 
+// If y value is a function f of x value, the expression of their
+// relation is: y = f(x)
+// in other words, the plot of a function is all points
+// that satisfy the expression: y-f(x)=0
+// this set has 0 thickness, and can't be seen.
+// Instead use the set of (x,y) that satisfy: -d < y-f(x) < d
+// in other words abs(y-f(x)) < d
+// where d is the thickness. (the thickness in in y direction)
+// Because of the properties of absolute function, the condition
+// abs(y-f(x)) < d is equivalent to the condition:
+// abs(f(x) - y) < d
+// We'll use this last one for function plotting. (in the previous one
+// we have to negate the function that we want to plot)
+shader_type canvas_item;
+uniform vec2 iResolution = vec2(120.0, 80.0);
+
+const float PI = 3.14159265359;
+const float TWOPI = 6.28318530718;
+
+float linearstep(float edge0, float edge1, float x) {
+	float t = (x - edge0)/(edge1 - edge0);
+	return clamp(t, 0.0, 1.0);
+}
+float smootherstep(float edge0, float edge1, float x) {
+	float t = (x - edge0)/(edge1 - edge0);
+	float t1 = t*t*t*(t*(t*6. - 15.) + 10.);
+	return clamp(t1, 0.0, 1.0);
+}
+
+void plot(vec2 r, float y, float lineThickness, vec3 color, inout vec3 pixel){
+	if (abs(y - r.y) < lineThickness) pixel = color;
+}
+
+void fragment() {
+	vec2 r =  2.0*vec2(UV * iResolution - 0.5*iResolution.xy)/iResolution.y;
+//	vec2 r =  2.0*vec2(fragCoord.xy - 0.5*iResolution.xy)/iResolution.y;
+	
+	float xMax = iResolution.x/iResolution.y;
+	
+	vec3 bgCol = vec3(0.3);
+	vec3 axesCol = vec3(0.0, 0.0, 1.0);
+	vec3 gridCol = vec3(0.5);
+	vec3 col1 = vec3(0.841, 0.582, 0.594);
+	vec3 col2 = vec3(0.884, 0.850, 0.648);
+	vec3 col3 = vec3(0.348, 0.555, 0.641);
+
+	vec3 pixel = bgCol;
+	
+//	// grid lines!
+	const float tickWidth = 0.1;
+	if (mod(r.x, tickWidth) < 0.008 || mod(r.y, tickWidth) < 0.008) pixel = gridCol;
+
+	// Draw the axis.
+	if ((abs(r.x) < 0.005) || abs(r.y) < 0.006) pixel = axesCol;
+	
+	// draw functions!
+	float x = r.x;
+	float y = r.y;
+	// pink
+	//if (abs(2.0 * x + 0.5 - y) < 0.02) pixel = col1;
+	// r is y, and y is f(x)??
+	plot(r, 2.0 * r.x + 0.5, 0.02, col1, pixel);
+	plot(r, r.x * r.x -0.2, 0.01, col1, pixel);
+	if( abs(sin(PI*r.x) - y) < 0.02 ) pixel = col1;
+	
+	// blue functions, the step function variations
+	// (functions are scaled and translated vertically)
+	//if (abs(0.25 * step(0.0, x) + 0.6 - y) < 0.01) pixel = col3;
+	plot(r, 0.25 * step(0.0, x) + 0.6, 0.01, col3, pixel);
+	if( abs(0.25*linearstep(-0.5, 0.5, x)+0.1 - y) < 0.01 ) pixel = col3;
+	if( abs(0.25*smoothstep(-0.5, 0.5, x)-0.4 - y) < 0.01 ) pixel = col3;
+	if( abs(0.25*smootherstep(-0.5, 0.5, x)-0.9 - y) < 0.01 ) pixel = col3;
+	
+	// yellow functions
+	// have a function that plots functions :-)
+	plot(r, 0.5*clamp(sin(TWOPI*x), 0.0, 1.0)-0.7, 0.015, col2, pixel);
+	// bell curve around -0.5
+	plot(r, 0.6*exp(-10.0*(x+0.8)*(x+0.8)) - 0.1, 0.015, col2, pixel);
+	
+	COLOR = vec4(pixel, 1.0);
+}
+"

@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Tests/Shapes/Circle.tres" type="Shader" id=1]
+[ext_resource path="res://Tests/Shapes/CircleOutline.gd" type="Script" id=2]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 1 )
+shader_param/iResolution = Vector2( 59, 35 )
+shader_param/line_width = 0.1
+shader_param/bell_height = 6.699
+shader_param/bell_width = 200.0
+shader_param/x_shift = -0.953
+shader_param/y_shift = -4.866
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CircleOutline" type="ColorRect" parent="."]
+material = SubResource( 1 )
+margin_right = 59.0
+margin_bottom = 35.0
+script = ExtResource( 2 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+visible = false
+margin_right = 66.0
+margin_bottom = 15.0
+text = "test rich"
+
+[node name="Label" type="Label" parent="."]
+visible = false
+margin_top = 16.0
+margin_right = 60.0
+margin_bottom = 30.0
+text = "test label"

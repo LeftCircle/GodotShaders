@@ -1,0 +1,24 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type canvas_item;
+
+void fragment(){
+	vec3 backgroundColor = vec3(1.0);
+	vec3 axisColor = vec3(0.0, 0.0, 1.0);
+	vec3 gridColor = vec3(0.5);
+	
+	vec3 pixel = backgroundColor;
+	// Draw the grid lines
+	// we used \"const\" because loop variables can only be manipulated
+	// by constant expressions.
+	const float tickWidth = 0.1;
+	for (float i = 0.0; i < 1.0; i += tickWidth){
+		if (abs(UV.x - i) < 0.002) pixel = gridColor;
+		if (abs(UV.y - i) < 0.002) pixel = gridColor;
+	}
+	// Draw the axis. Note that the x axis is on the top
+	if ((abs(UV.x) < 0.005) || abs(UV.y) < 0.006) pixel = axisColor;
+	COLOR = vec4(pixel, 1.0);
+}
+"

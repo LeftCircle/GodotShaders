@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "ColorRect",
+"class": "CircleOutlineShader",
+"language": "GDScript",
+"path": "res://Tests/Shapes/CircleOutline.gd"
+} ]
+_global_script_class_icons={
+"CircleOutlineShader": ""
+}
+
 [application]
 
 config/name="Shaders"
